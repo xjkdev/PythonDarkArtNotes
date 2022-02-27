@@ -26,6 +26,47 @@ setup(
     python_requires=">=3.6",
 )
 ```
+## 函数
+
+
+
+## Classes
+
+# 成员变量（字段）
+```cpp
+py::class_<Pet>(m, "Pet")
+    .def(py::init<>())
+    .def_readwrite("name", &Pet::name);
+```
+
+# 构造函数
+```cpp
+py::class_<Foo>(m, "Foo")
+    .def(py::init<>())          // 空构造函数
+    .def(py::init<Args...>())   // 其他已知的构造函数重载
+    .def(py::init(Function))    // 自定义构造函数
+```
+
+> pybind11::init<> internally uses C++11 brace initialization to call the constructor of the target class. This means that it can be used to bind implicit constructors as well.
+>
+> Note that brace initialization preferentially invokes constructor overloads taking a std::initializer_list. In the rare event that this causes an issue, you can work around it by using py::init(...) with a lambda function that constructs the new object as desired.
+
+# 函数重载
+```cpp
+py::class_<Pet>(m, "Pet")
+   .def(py::init<const std::string &, int>())
+   .def("set", static_cast<void (Pet::*)(int)>(&Pet::set), "Set the pet's age")
+   .def("set", static_cast<void (Pet::*)(const std::string &)>(&Pet::set), "Set the pet's name");
+```
+
+If you have a C++14 compatible compiler 2, you can use an alternative syntax to cast the overloaded function:
+
+```cpp
+py::class_<Pet>(m, "Pet")
+    .def("set", py::overload_cast<int>(&Pet::set), "Set the pet's age")
+    .def("set", py::overload_cast<const std::string &>(&Pet::set), "Set the pet's name");
+```
+
 
 ## Numpy
 

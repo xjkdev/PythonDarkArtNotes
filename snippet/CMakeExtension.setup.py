@@ -168,6 +168,9 @@ Project Tree:
 │       └── ext3.cpp
 └── setup.py
 
+And see setup function.
+"""
+
 setup(
     name='example',
     version='0.1',
@@ -178,4 +181,3 @@ setup(
         'build_ext': CMakeBuild,
     }
 )
-"""
