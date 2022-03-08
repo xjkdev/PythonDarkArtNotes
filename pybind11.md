@@ -69,6 +69,7 @@ py::class_<Pet>(m, "Pet")
 
 
 ## Numpy
+`py::array`表示任何Numpy矩阵。 `py::array_t<T>`可用泛型。
 
 Methods of `py::array_t`:
 
@@ -165,3 +166,38 @@ link_directories(/usr/lib/x86_64-linux-gnu)
 pybindll_add_module(example example.cpp)
 target_link_libraries(example PUBLIC pcl_io) # PCL Libraries
 ```
+
+### 已知64位系统下，numpy与pybind11的格式描述字符串不一致。
+区别如下：
+|| Linux 32-bit |Linux 64-bit |MacOS 64-bit |Windows 32-bit |Windows 64-bit |diff?|
+| -- |  -- |  -- |  -- |  -- |  -- |  -- |
+|bool_ |? |? |? |? |? ||
+|int8 |b |b |b |b |b ||
+|int16 |h |h |h |h |h ||
+|int32 |l |i |i |l |l |yes|
+|int64 |q |l |l |q |q |yes|
+|uint8 |B |B |B |B |B ||
+|uint16 |H |H |H |H |H ||
+|uint32 |L |I |I |L |L |yes|
+|uint64 |Q |L |L |Q |Q |yes|
+|intc |i |i |i |i |i ||
+|uintc |I |I |I |I |I ||
+|longlong |q |q |q |q |q ||
+|ulonglong |Q |Q |Q |Q |Q ||
+|float16 |e |e |e |e |e ||
+|float32 |f |f |f |f |f ||
+|float64 |d |d |d |d |d ||
+|float128 |N/A |g |g |N/A |N/A |yes|
+|complex64 |Zf |Zf |Zf |Zf |Zf ||
+|complex128 |Zd |Zd |Zd |Zd |Zd ||
+|complex256 |N/A |Zg |Zg |N/A |N/A |yes|
+|datetime64 |M |M |M |M |M ||
+|timedelta64 |m |m |m |m |m ||
+|bytes_ |3s |3s |3s |3s |3s ||
+|str_ |3w |3w |3w |3w |3w ||
+|record |T{...} |T{...} |T{...} |T{...} |T{...} ||
+|object_ |O |O |O |O |O ||
+
+使用helpers里的`check_dtype`方法匹配。如果为整型，则忽略具体格式字符，转而匹配元素的位长。
+
+或使用dtype匹配（未实践）。
