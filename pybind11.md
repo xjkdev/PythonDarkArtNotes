@@ -26,6 +26,10 @@ setup(
     python_requires=">=3.6",
 )
 ```
+
+### Setuptools和CMake相结合
+在setup.py中，编写自定义编译类，再通过CMake编译，参见snippet.
+
 ## 函数
 
 
